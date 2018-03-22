@@ -1,0 +1,65 @@
+代码管理
+　　除克隆、修改、提交代码外，其它merge、建立分支等操作都在Gitlab网页端进行。
+　　所有分支中，master分支为主干分支，此分支的代码不允许直接修改，只能由其它分支（一般只由develop分支）发出merge请求，经项目管理员代码审查通过后合并代码，普通开发者无权执行push、merge等操作，确保此分支任何时候、任何tag处导出的项目代码都是稳定可正常运行的代码；develop分支为开发分支，可以接受由其它分支发起的merge请求，同样只能经项目管理员代码审查通过后予以合并。
+（一）新建项目
+　　对于独自承担的不依赖系统的任务，如各种应用类app，可以在web端建立自己的项目，便于代码控制。
+　　而后取得项目地址，如“git@lsyer-ThinkPad-E420:root/uboot.git”（有的服务器上显示为“ssh://git@lsyer-ThinkPad-E420:root/uboot.git”，两者相同，因为git会默认使用ssh协议），并在pc端初始化并上传代码。
+　　$?git?clone?git@lsyer-ThinkPad-E420:root/uboot.git
+　　$?cd?uboot
+　　——（在此文件夹下添加初始代码）——
+　　$?git?add?.
+　　$?git?commit?-m?“Initial”
+　　$?git?push?-u?origin?master
+（二）建立自己的开发分支
+　　进入Gitlab项目主界面后，在网页端新建分支，作为自己开发的专属分支，之后个人所有开发都在此分支进行。
+　　?
+　　?
+　　其中，分支命名建议以develop_XXX形式命名（xxx为自己的代号或姓名简拼），来源分支初始时一般从master分支而来。
+　　?
+   以后的开发过程中，若需临时增加分支，按照以上操作，酌情执行。
+（三）克隆分支代码
+　　基本命令结构如下：
+　　$?git?clone?-b?<branch?name>?[remote?repository?address]
+　　如测试服务器boot项目的git地址为“git@lsyer-ThinkPad-E420:root/uboot.git”，分支名为“develop_lsyer”，则此命令为：
+　　$?git?clone?-b?develop_lsyer?git@lsyer-ThinkPad-E420:root/uboot.git
+　　进入代码目录，查看分支，确认下载成功且当前分支为所需分支。执行结果如大致如图：
+　　?
+（四）提交已修改的代码
+　　git代码库是分布存储的，分为本地库和远端库。执行push操作之前，不影响远端库；commit操作只修改本地库。因此，本地修改代码后，若要上传至服务器需三个操作：
+　　$?git?add?.
+　　$?git?commit?-am?“update?comments”
+　　$?git?push?origin?develop_lsyer:develop_lsyer
+　　其中，若本地修改时增加了文件，则需要执行第一条命令，“.”代表当前目录下所有文件，也可指定某文件，如“git?add?theAddFile.c”；
+　　第二条命令将修改提交到本地库，am参数指明本次修改的注释，一般只用英文；
+　　第三条命令将本地代码提交到远端服务器，origin表示远端默认服务器，在“git?clone”时已指明，第一个develop_lsyer表示本地的分支名，第二个develop_lsyer表示远端分支名，整条命令表示将本地的develop_lsyer分支代码修改情况，merge到远端的develop_lsyer分支。?
+（五）合并代码到主分支
+　　此步骤在Gitlab网页端执行。
+　　自己的代码修改调试通过，需要适时合并到主干分支，则需要发起merge请求。在发起merge请求前，先通过步骤（三）将已测试通过的代码push到远端自己所属分支，而后打开Gitlab站点执行操作。如图。
+　　?
+　　填写相关信息，需要注意最后三项，可以看到是合并方向，是从Source?branch的“develop_lsyer”到Target?branch的“master”分支，且根据需要选择是否合并后删除本分支。一般临时性分支可以选择合并后自动删除，个人工作分支一般不选。最后点击提交请求即可。
+　　?
+　　?
+（六）同步远端最新代码
+　　$?git?fetch?origin?master:tmp
+　　$?git?diff?tmp
+　　$?git?merge?tmp?
+　　$?git?branch?-d?tmp
+　　第一条表示从origin处获取master的代码，存在本地的tmp分支中；
+　　第二句表示将tmp分支中的代码与本地当前分支的代码进行对比，查看异同，等同于“git?diff?tmp?develop_lsyer”，显示内容中“+”表示命令中后一分支多出的部分、“-”表示命令中后一分支少的部分；
+　　第三句表示将tmp分支合并到当前分支；
+　　第四句表示删除tmp分支。
+　　?
+Gitlab基本管理
+（一）权限控制
+　　从Gitlab的web端完成，使用成员分组和保护分支功能实现。
+　　在项目主页的设置中，点击进入“Protected?Branches”配置页面：
+　　?
+　　进入设置页面，如下：
+　　
+??
+　　从上图可见，上半部分是新增保护分支，下面是已处于保护状态的分支列表。其中，master分支是项目的默认分支，且已处于保护状态，merge和push操作只有Masters组的成员才能进行，可以根据需要直接修改。
+（二）处理merge请求
+　　一旦有成员发起了merge请求，Merge?Requests处会显示尚未处理的请求数量，不为0时可进入页面进行处理。
+　　
+　　之后点击某个要处理的请求，可以看到具体的修改信息，如Commits和Changes，以及发起请求的来源分支、成员、备注等信息。拥有Merge权限的成员审查后，选择通过、修改或关闭。
+
