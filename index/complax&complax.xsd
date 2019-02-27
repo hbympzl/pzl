@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="student">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:restriction base="xsd:anyType">
+                    <xsd:sequence>
+                        <!--后面的type可以设置自定义名称 通过simpleType对其进行限制-->
+                        <xsd:element name="name" type="xsd:string"/>
+                        <xsd:element name="age" type="ageType"/>
+                        <xsd:element name="sex" type="sexType"/>
+                    </xsd:sequence>
+                    <xsd:attribute name="number" type="xsd:integer"/>
+                </xsd:restriction>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    <!--通过type进行关联约束-->
+    <xsd:simpleType name="ageType">
+        <xsd:restriction base="xsd:integer">
+            <xsd:maxLength value="100"/>
+            <xsd:minLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!--复简-->
+    <xsd:complexType name="sexType">
+        <xsd:simpleContent>
+            <!--扩展属性-->
+            <xsd:extension base="sexType2">
+                <xsd:attribute name="number" use="optional" default="N_0000">
+                    <!--number属性的约束-->
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:string">
+                            <xsd:pattern value="N_\d{4}"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <!--扩展属性后约束-->
+    <xsd:simpleType name="sexType2">
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="3"/>
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>

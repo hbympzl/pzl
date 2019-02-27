@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:element name="name">
+        <xsd:complexType>
+            <xsd:simpleContent>
+                <xsd:extension base="nameType">
+                    <!--扩展属性名称为number-->
+                    <xsd:attribute name="number" use="optional" default="N_0000">
+                        <!--number属性的约束-->
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:pattern value="N_\d{4}"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:simpleContent>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:simpleType name="nameType">
+        <!--元素的约束-->
+        <xsd:restriction base="xsd:string">
+            <xsd:minLength value="3"/>
+            <xsd:maxLength value="10"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
